@@ -1,19 +1,42 @@
-# github.com/samber/lo v1.49.1
-## explicit; go 1.18
-github.com/samber/lo
-github.com/samber/lo/internal/constraints
-github.com/samber/lo/internal/rand
-github.com/samber/lo/mutable
-# golang.org/x/text v0.21.0
-## explicit; go 1.18
-golang.org/x/text/cases
-golang.org/x/text/internal
-golang.org/x/text/internal/language
-golang.org/x/text/internal/language/compact
-golang.org/x/text/internal/tag
-golang.org/x/text/language
-golang.org/x/text/transform
-golang.org/x/text/unicode/norm
+# github.com/fatih/structs v1.1.0
+## explicit
+github.com/fatih/structs
+# github.com/fsnotify/fsnotify v1.4.9
+## explicit; go 1.13
+github.com/fsnotify/fsnotify
+# github.com/knadh/koanf v0.0.0-00010101000000-000000000000 => github.com/knadh/koanf v1.5.0
+## explicit; go 1.12
+github.com/knadh/koanf
+github.com/knadh/koanf/maps
+github.com/knadh/koanf/parsers/yaml
+github.com/knadh/koanf/providers/env
+github.com/knadh/koanf/providers/file
+github.com/knadh/koanf/providers/structs
+# github.com/kr/text v0.2.0
+## explicit
+# github.com/mitchellh/copystructure v1.2.0
+## explicit; go 1.15
+github.com/mitchellh/copystructure
+# github.com/mitchellh/mapstructure v1.5.0
+## explicit; go 1.14
+github.com/mitchellh/mapstructure
+# github.com/mitchellh/reflectwalk v1.0.2
+## explicit
+github.com/mitchellh/reflectwalk
+# github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e
+## explicit; go 1.12
+# github.com/stretchr/testify v1.10.0
+## explicit; go 1.17
+# golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40
+## explicit; go 1.17
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+# gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
+## explicit
 # gopkg.in/natefinch/lumberjack.v2 v2.2.1
 ## explicit; go 1.13
 gopkg.in/natefinch/lumberjack.v2
+# gopkg.in/yaml.v3 v3.0.1
+## explicit
+gopkg.in/yaml.v3
+# github.com/knadh/koanf => github.com/knadh/koanf v1.5.0
