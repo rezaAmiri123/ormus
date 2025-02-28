@@ -1,0 +1,11 @@
+package redistaskstorage
+
+import "github.com/rezaAmiri123/ormus/adapter/redis"
+
+type DB struct {
+	adapter redis.Adapter
+}
+
+func New(adapter redis.Adapter) DB {
+	return DB{adapter: adapter}
+}
