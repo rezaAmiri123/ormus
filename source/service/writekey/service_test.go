@@ -8,8 +8,7 @@ import (
 	"github.com/rezaAmiri123/ormus/source/service/writekey"
 )
 
-type mockRepo struct {
-}
+type mockRepo struct{}
 
 // TODO - use https://github.com/golang/mock
 func (m mockRepo) IsValidWriteKey(ctx context.Context, writeKey string) (bool, error) {
