@@ -1,8 +1,8 @@
 package taskmanager
 
-import "github.com/rezaAmiri123/ormus/destination/entity"
+import "github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 
 // Queue is an interface for a queue of tasks in the task manager.
 type Queue interface {
-	enqueue(task entity.Task) error
+	Enqueue(task taskentity.Task) error
 }

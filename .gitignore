@@ -28,3 +28,5 @@ go.work.sum
 # logs
 logs/
 mise.log
+
+destination/logs.json
