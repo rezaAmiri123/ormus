@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
-	"github.com/rezaAmiri123/ormus/destination/integrationhandler/adapters/fakeintegrationhandler"
+	"github.com/rezaAmiri123/ormus/destination/taskdelivery/adapters/fakedeliveryhandler"
 	"github.com/rezaAmiri123/ormus/destination/taskmanager"
 	"github.com/rezaAmiri123/ormus/destination/taskmanager/adapter/rabbitmqtaskmanager"
 	"github.com/rezaAmiri123/ormus/destination/taskservice"
@@ -15,7 +15,6 @@ import (
 )
 
 // DestinationTypeCoordinator is responsible for setup task managers and publish incoming processed events using suitable task publishers.
-
 type DestinationTypeCoordinator struct {
 	TaskService              taskservice.Service
 	TaskPublishers           map[string]taskmanager.Publisher
@@ -46,7 +45,7 @@ func (d DestinationTypeCoordinator) Start(processedEvents <-chan event.Processed
 			select {
 			case pe := <-processedEvents:
 
-				taskPublisher, ok := d.TaskPublishers["webhook"]
+				taskPublisher, ok := d.TaskPublishers[pe.DestinationType()]
 				if !ok {
 					slog.Error(fmt.Sprintf("Error on finding task manager for %s", pe.DestinationType()))
 
@@ -68,13 +67,15 @@ func (d DestinationTypeCoordinator) Start(processedEvents <-chan event.Processed
 	}()
 
 	webhookTaskConsumer := rabbitmqtaskmanager.NewTaskConsumer(d.RabbitMQConnectionConfig, "webhook_tasks_queue")
-	fakeWebhookHandler := fakeintegrationhandler.New()
 
 	// Run workers
 	// todo we can use loop in range of slices of workers.
 	// also we can use config for number of each worker for different destination types.
 
-	webhookWorker1 := rabbitmqtaskmanager.NewWorker(webhookTaskConsumer, fakeWebhookHandler, d.TaskService)
+	taskDeliveryHandler := fakedeliveryhandler.New()
+	taskHandler := taskservice.NewTaskHandler(d.TaskService, taskDeliveryHandler)
+
+	webhookWorker1 := rabbitmqtaskmanager.NewWorker(webhookTaskConsumer, taskHandler)
 	err := webhookWorker1.Run(done, wg)
 	if err != nil {
 		log.Panicf("%s: %s", "Error on webhook worker", err)

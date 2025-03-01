@@ -8,68 +8,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
-	"github.com/rezaAmiri123/ormus/destination/integrationhandler"
 	"github.com/rezaAmiri123/ormus/destination/taskmanager"
-	"github.com/rezaAmiri123/ormus/destination/taskservice"
-	"github.com/rezaAmiri123/ormus/event"
 )
 
 const timeoutInSeconds = 5
 
 type Worker struct {
 	TaskConsumer taskmanager.Consumer
-	Handler      integrationhandler.IntegrationHandler
-	TaskService  taskservice.Service
-}
-
-func (w *Worker) handleEvent(ctx context.Context, newEvent event.ProcessedEvent) error {
-	var task taskentity.Task
-	var err error
-
-	ts := w.TaskService
-	var taskStatus taskentity.IntegrationDeliveryStatus
-
-	taskID := newEvent.ID()
-
-	// check idempotency
-	if taskStatus, err = ts.GetTaskStatusByID(ctx, taskID); err != nil {
-		// todo use richError
-		return err
-	}
-
-	if taskStatus.CanBeExecuted() {
-
-		if taskStatus.IsBroadcast() {
-			task, err = ts.GetTaskByID(taskID)
-			if err != nil {
-				slog.Error(fmt.Sprintf("Error on GetTaskByID : %v", err))
-			}
-		} else {
-			task = taskentity.MakeTaskUsingProcessedEvent(newEvent)
-		}
-
-		res, err := w.Handler.Handle(task, newEvent)
-
-		if err != nil {
-			task.FailedReason = res.FailedReason
-			task.Attempts = res.Attempts
-			task.IntegrationDeliveryStatus = res.DeliveryStatus
-		} else {
-			return err
-		}
-
-		err = ts.UpsertTaskAndSaveIdempotency(ctx, task)
-		if err != nil {
-			// todo what should we do if error occurs in updating task repo or idempotency ?
-			slog.Error(fmt.Sprintf("Error on UpsertTaskAndSaveIdempotency : %v", err))
-		}
-
-	} else {
-		slog.Error(fmt.Sprintf("Task [%s] is not executable", taskID))
-	}
-
-	return nil
+	TaskHandler  taskmanager.TaskHandler
 }
 
 func (w *Worker) Run(done <-chan bool, wg *sync.WaitGroup) error {
@@ -89,7 +35,7 @@ func (w *Worker) Run(done <-chan bool, wg *sync.WaitGroup) error {
 				go func() {
 					ctx, cancel := context.WithTimeout(context.Background(), timeoutInSeconds*time.Second)
 					defer cancel()
-					err := w.handleEvent(ctx, newEvent)
+					err := w.TaskHandler.HandleTask(ctx, newEvent)
 					if err != nil {
 						slog.Error(fmt.Sprintf("Error on handling event using integration handler.Error : %v", err))
 					}
@@ -104,11 +50,10 @@ func (w *Worker) Run(done <-chan bool, wg *sync.WaitGroup) error {
 	return nil
 }
 
-func NewWorker(c taskmanager.Consumer, h integrationhandler.IntegrationHandler, srv taskservice.Service) *Worker {
+func NewWorker(c taskmanager.Consumer, th taskmanager.TaskHandler) *Worker {
 	return &Worker{
 		TaskConsumer: c,
-		Handler:      h,
-		TaskService:  srv,
+		TaskHandler:  th,
 	}
 }
 
