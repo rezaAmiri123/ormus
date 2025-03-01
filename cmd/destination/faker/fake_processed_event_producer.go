@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/rezaAmiri123/ormus/config"
 	"log"
 	"time"
 
@@ -20,13 +22,22 @@ func failOnError(err error, msg string) {
 }
 
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
+	rmqConsumerConnConfig := config.C().Destination.RabbitMQConsumerConnection
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%d/", rmqConsumerConnConfig.User,
+		rmqConsumerConnConfig.Password, rmqConsumerConnConfig.Host, rmqConsumerConnConfig.Port))
+	//conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+
+	defer func(conn *amqp.Connection) {
+		err = conn.Close()
+		failOnError(err, "Failed to close RabbitMQ connection")
+	}(conn)
 
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
+	defer func(ch *amqp.Channel) {
+		err = ch.Close()
+		failOnError(err, "Failed to close channel")
+	}(ch)
 
 	err = ch.ExchangeDeclare(
 		"processed-events-exchange", // name
@@ -43,7 +54,7 @@ func main() {
 	defer cancel()
 
 	fakeIntegration := entity.Integration{
-		ID:       "3",
+		ID:       "5",
 		SourceID: "1",
 		Metadata: entity.DestinationMetadata{
 			ID:   "1",
