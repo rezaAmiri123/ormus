@@ -7,7 +7,6 @@ import (
 
 	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"github.com/rezaAmiri123/ormus/destination/taskdelivery/param"
-	"github.com/rezaAmiri123/ormus/event"
 )
 
 type FakeHandler struct{}
@@ -18,10 +17,10 @@ func New() *FakeHandler {
 
 const fakeProcessingTimeSecond = 2
 
-func (h FakeHandler) Handle(t taskentity.Task, _ event.ProcessedEvent) (param.DeliveryTaskResponse, error) {
+func (h FakeHandler) Handle(t taskentity.Task) (param.DeliveryTaskResponse, error) {
 	time.Sleep(fakeProcessingTimeSecond * time.Second)
 
-	slog.Info(fmt.Sprintf("Task [%s] handled successfully!", t.ID))
+	slog.Info(fmt.Sprintf("Task [%s] handled successfully! ✅ ", t.ID))
 
 	res := param.DeliveryTaskResponse{
 		Attempts:       1,

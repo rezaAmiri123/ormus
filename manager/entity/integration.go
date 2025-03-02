@@ -6,6 +6,12 @@ type IntegrationConfig map[string]any
 
 type DestinationCategory string
 
+type DestinationType string
+
+const (
+	WebhookDestinationType DestinationType = "webhook"
+)
+
 const (
 	Analytics      DestinationCategory = "analytics"
 	Advertising    DestinationCategory = "advertising"
@@ -18,7 +24,7 @@ const (
 
 // ConnectionType each third party destination are compatible with one of these methods
 // it means we have to deliver data to the destinations with these methods
-// https://github.com/ormushq/ormus/issues/9
+// https://github.com/rezaAmiri123/ormus/issues/9
 type ConnectionType string
 
 const (
@@ -41,7 +47,7 @@ type Integration struct {
 
 type DestinationMetadata struct {
 	ID         string
-	Name       string // Javascript, Google Universal Analytics
-	Slug       string // javascript, google-analytics
+	Name       string          // webhook, Google Universal Analytics
+	Slug       DestinationType // webhook, google-analytics
 	Categories []DestinationCategory
 }

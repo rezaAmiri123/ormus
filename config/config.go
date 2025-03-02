@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/rezaAmiri123/ormus/adapter/etcd"
 	"github.com/rezaAmiri123/ormus/adapter/redis"
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/manager"
@@ -8,8 +9,9 @@ import (
 )
 
 type Config struct {
-	Manager     manager.Config `koanf:"manager"`
 	Redis       redis.Config   `koanf:"redis"`
+	Etcd        etcd.Config    `koanf:"etcd"`
+	Manager     manager.Config `koanf:"manager"`
 	Source      source.Config  `koanf:"source"`
 	Destination dconfig.Config `koanf:"destination"`
 }
