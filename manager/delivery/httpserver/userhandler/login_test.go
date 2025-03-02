@@ -11,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver/userhandler"
-	usermock "github.com/rezaAmiri123/ormus/manager/mock"
+	"github.com/rezaAmiri123/ormus/manager/mock/usermock"
 	"github.com/rezaAmiri123/ormus/manager/service/authservice"
 	"github.com/rezaAmiri123/ormus/manager/service/userservice"
 	"github.com/rezaAmiri123/ormus/manager/validator/uservalidator"
