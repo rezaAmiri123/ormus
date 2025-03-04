@@ -2,12 +2,12 @@ package rabbitmqchanneltaskmanager
 
 import (
 	"fmt"
-	"github.com/rezaAmiri123/ormus/pkg/channel"
-	"log"
 	"sync"
 
 	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"github.com/rezaAmiri123/ormus/event"
+	"github.com/rezaAmiri123/ormus/logger"
+	"github.com/rezaAmiri123/ormus/pkg/channel"
 )
 
 type Consumer struct {
@@ -30,13 +30,6 @@ func (c Consumer) Consume(done <-chan bool, wg *sync.WaitGroup) (<-chan event.Pr
 		for {
 			select {
 			case msg := <-c.messageChannel:
-				aErr := msg.Ack()
-				if aErr != nil {
-					printWorkersError(aErr, "Failed to acknowledge message")
-
-					break
-				}
-				fmt.Println(string(msg.Body))
 				e, err := taskentity.UnmarshalBytesToProcessedEvent(msg.Body)
 				if err != nil {
 					printWorkersError(err, "Failed to unmarshall message")
@@ -45,6 +38,12 @@ func (c Consumer) Consume(done <-chan bool, wg *sync.WaitGroup) (<-chan event.Pr
 				}
 
 				eventsChannel <- e
+				aErr := msg.Ack()
+				if aErr != nil {
+					printWorkersError(aErr, "Failed to acknowledge message")
+
+					break
+				}
 			case <-done:
 
 				return
@@ -56,5 +55,5 @@ func (c Consumer) Consume(done <-chan bool, wg *sync.WaitGroup) (<-chan event.Pr
 }
 
 func printWorkersError(err error, msg string) {
-	log.Printf("%s: %s", msg, err)
+	logger.L().Error(fmt.Sprintf("%s: %s", msg, err))
 }

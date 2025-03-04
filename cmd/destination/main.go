@@ -1,9 +1,6 @@
 package main
 
 import (
-	"github.com/rezaAmiri123/ormus/destination/dconfig"
-	"github.com/rezaAmiri123/ormus/pkg/channel"
-	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
 	"log"
 	"log/slog"
 	"os"
@@ -12,11 +9,14 @@ import (
 	"time"
 
 	"github.com/rezaAmiri123/ormus/config"
+	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/destination/processedevent/adapter/rabbitmqconsumer"
 	"github.com/rezaAmiri123/ormus/destination/taskcoordinator/adapter/dtcoordinator"
 	"github.com/rezaAmiri123/ormus/destination/taskmanager/adapter/rabbitmqchanneltaskmanager"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/manager/entity"
+	"github.com/rezaAmiri123/ormus/pkg/channel"
+	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
 )
 
 const waitingAfterShutdownInSeconds = 1

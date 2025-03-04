@@ -1,10 +1,6 @@
 package main
 
 import (
-	"github.com/rezaAmiri123/ormus/destination/dconfig"
-	"github.com/rezaAmiri123/ormus/destination/taskmanager/adapter/rabbitmqchanneltaskmanager"
-	"github.com/rezaAmiri123/ormus/pkg/channel"
-	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
 	"log"
 	"log/slog"
 	"os"
@@ -15,13 +11,17 @@ import (
 	"github.com/rezaAmiri123/ormus/adapter/etcd"
 	"github.com/rezaAmiri123/ormus/adapter/redis"
 	"github.com/rezaAmiri123/ormus/config"
+	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/destination/taskdelivery"
 	"github.com/rezaAmiri123/ormus/destination/taskdelivery/adapters/fakedeliveryhandler"
+	"github.com/rezaAmiri123/ormus/destination/taskmanager/adapter/rabbitmqchanneltaskmanager"
 	"github.com/rezaAmiri123/ormus/destination/taskservice"
 	"github.com/rezaAmiri123/ormus/destination/taskservice/adapter/idempotency/redistaskidempotency"
 	"github.com/rezaAmiri123/ormus/destination/taskservice/adapter/repository/inmemorytaskrepo"
 	"github.com/rezaAmiri123/ormus/destination/worker"
 	"github.com/rezaAmiri123/ormus/logger"
+	"github.com/rezaAmiri123/ormus/pkg/channel"
+	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
 )
 
 const waitingAfterShutdownInSeconds = 2

@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/rezaAmiri123/ormus/config"
 	"log"
 	"time"
 
+	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/event"
+	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/manager/entity"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -25,7 +26,6 @@ func main() {
 	rmqConsumerConnConfig := config.C().Destination.RabbitMQConsumerConnection
 	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%d/", rmqConsumerConnConfig.User,
 		rmqConsumerConnConfig.Password, rmqConsumerConnConfig.Host, rmqConsumerConnConfig.Port))
-	//conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 
 	defer func(conn *amqp.Connection) {
 		err = conn.Close()
@@ -54,7 +54,7 @@ func main() {
 	defer cancel()
 
 	fakeIntegration := entity.Integration{
-		ID:       "5",
+		ID:       "10",
 		SourceID: "1",
 		Metadata: entity.DestinationMetadata{
 			ID:   "1",
@@ -93,5 +93,5 @@ func main() {
 		})
 	failOnError(err, "Failed to publish a message")
 
-	log.Printf("Publish new processed event.")
+	logger.L().Debug("Publish new processed event.")
 }
