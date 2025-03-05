@@ -1,80 +1,81 @@
 /*
-Package scyllainitialize provides functionality for initializing a connection to ScyllaDB database using to gocql library.
+Package initializedb provides functions for initializing a ScyllaDB connection and obtaining a database session.
 
-Note: Make sure to handle errors appropriately when using this package.
+Usage:
+
+	func main() {
+	    // Create a new ScyllaDB connection instance
+	    connection := initializedb.NewScyllaDBConnection(gocql.Quorum, "example_keyspace", "127.0.0.1")
+
+	    // Get a ScyllaDB session using the created connection
+	    session, err := initializedb.GetConnection(connection)
+	    if err != nil {
+	        log.Fatal("Failed to get ScyllaDB session:", err)
+	    }
+
+	    // Use the 'session' for database operations
+
+	    // Close the session when done
+	    defer session.Close()
+	}
+
+This package includes functions for creating a new ScyllaDB connection and obtaining a ScyllaDB session.
+It utilizes the gocql library for interacting with ScyllaDB.
+
+Functions:
+
+  - NewScyllaDBConnection: Creates and returns a new instance of the 'scyllaDBConnection' type with the specified connection parameters.
+    func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, hosts ...string) *scyllaDBConnection
+
+  - GetConnection: Returns a ScyllaDB session using the provided 'scyllaDBConnection' instance.
+    It internally creates a ScyllaDB cluster configuration and session.
+    func GetConnection(conn *scyllaDBConnection) (scylladb.SessionxInterface, error)
 */
 package scyllainitialize
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/gocql/gocql"
 	"github.com/rezaAmiri123/ormus/adapter/scylladb"
 	"github.com/rezaAmiri123/ormus/logger"
+	scyllaMigrate "github.com/rezaAmiri123/ormus/source/repository/scylladb/migrate"
 )
 
-type ScyllaDBConnection struct {
-	consistency gocql.Consistency
-	keyspace    string
-	hosts       []string
-}
-
-const (
-	timeoutCluster = 5 * time.Second
-
-	// numRetries represents the number of retries in the ExponentialBackoffRetryPolicy.
-	numRetries = 5
-
-	// minRetryDelay represents the minimum delay duration in the ExponentialBackoffRetryPolicy.
-	minRetryDelay = time.Second
-
-	// maxRetryDelay represents the maximum delay duration in the ExponentialBackoffRetryPolicy.
-	maxRetryDelay = 10 * time.Second
-)
-
-/*
-The 'createCluster' method creates and returns a gocql.ClusterConfig
-based on the provided connection parameters. It also sets additional configurations,
-such as timeout and retry policies.
-*/
-func (conn *ScyllaDBConnection) createCluster() *gocql.ClusterConfig {
-	cluster := gocql.NewCluster(conn.hosts...)
-	cluster.Consistency = conn.consistency
-	cluster.Keyspace = conn.keyspace
-	cluster.Timeout = timeoutCluster
-	cluster.RetryPolicy = &gocql.ExponentialBackoffRetryPolicy{
-		NumRetries: numRetries,
-		Min:        minRetryDelay,
-		Max:        maxRetryDelay,
+func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, hosts ...string) *ScyllaDBConnection {
+	return &ScyllaDBConnection{
+		consistency: consistency,
+		keyspace:    keyspace,
+		hosts:       hosts,
 	}
-	cluster.PoolConfig.HostSelectionPolicy = gocql.TokenAwareHostPolicy(gocql.RoundRobinHostPolicy())
-
-	logger.L().Debug("cluster was created.")
-
-	return cluster
 }
 
-func (conn *ScyllaDBConnection) createKeyspace(session scylladb.SessionxInterface, keyspace string) error {
-	stmt := fmt.Sprintf("CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}", keyspace)
-
-	return session.ExecStmt(stmt)
+func GetConnection(conn *ScyllaDBConnection) (scylladb.SessionxInterface, error) {
+	return conn.createSession(conn.createCluster())
 }
 
-/*
-The 'createSession' method creates a ScyllaDB session using the given gocql.ClusterConfig.
-It returns a session wrapped by the 'scylladb' package, which provides additional functionalities.
-If an error occurs during the session creation, an error is returned.
-*/
-func (conn *ScyllaDBConnection) createSession(cluster *gocql.ClusterConfig) (scylladb.SessionxInterface, error) {
-	session, err := scylladb.WrapSession(cluster.CreateSession())
+func CreateKeySpace(consistency gocql.Consistency, keyspace string, hosts ...string) error {
+	scyllaDBConnection := &ScyllaDBConnection{
+		consistency: consistency,
+		keyspace:    "system",
+		hosts:       hosts,
+	}
+
+	session, err := scyllaDBConnection.createSession(scyllaDBConnection.createCluster())
 	if err != nil {
-		logger.L().Debug("an error occurred while creating DB Session", err)
-
-		return nil, err
+		return err
 	}
 
-	logger.L().Debug("session was created")
+	return scyllaDBConnection.createKeyspace(session, keyspace)
+}
 
-	return session, nil
+func RunMigrations(dbConn *ScyllaDBConnection, dir string) error {
+	logger.L().Debug("running migrations...")
+	for _, host := range dbConn.hosts {
+		manager := scyllaMigrate.New(dir, host, dbConn.keyspace)
+		err := manager.Run()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

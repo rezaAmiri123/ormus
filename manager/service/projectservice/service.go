@@ -2,17 +2,21 @@ package projectservice
 
 import (
 	"github.com/rezaAmiri123/ormus/manager/entity"
-	"github.com/rezaAmiri123/ormus/manager/mock/projectstub"
+	"github.com/rezaAmiri123/ormus/pkg/channel/adapter/simple"
 )
 
 type Repository interface {
-	Create(name, email string) (entity.Project, error)
+	Create(name, ID string) (entity.Project, error)
 }
 
 type Service struct {
-	repo Repository
+	repo           Repository
+	internalBroker *simple.ChannelAdapter
 }
 
-func New(repository projectstub.MockProject) *Service {
-	return &Service{repo: &repository}
+func New(repository Repository, internalBroker *simple.ChannelAdapter) *Service {
+	return &Service{
+		repo:           repository,
+		internalBroker: internalBroker,
+	}
 }

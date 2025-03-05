@@ -1,6 +1,9 @@
 package userservice
 
-import "github.com/rezaAmiri123/ormus/manager/entity"
+import (
+	"github.com/rezaAmiri123/ormus/manager/entity"
+	"github.com/rezaAmiri123/ormus/pkg/channel/adapter/simple"
+)
 
 type Repository interface {
 	Register(u entity.User) (*entity.User, error)
@@ -14,8 +17,9 @@ type JWTEngine interface {
 }
 
 type Service struct {
-	repo Repository
-	jwt  JWTEngine
+	repo           Repository
+	jwt            JWTEngine
+	internalBroker *simple.ChannelAdapter
 }
 
 // This benchmark is the result of using a pointer, or a struct in return of New() function of this package
@@ -28,6 +32,6 @@ type Service struct {
 // PASS
 // ok      github.com/rezaAmiri123/ormus/manager/service        2.590s
 
-func New(authGenerator JWTEngine, repository Repository) *Service {
-	return &Service{jwt: authGenerator, repo: repository}
+func New(authGenerator JWTEngine, repository Repository, internalBroker *simple.ChannelAdapter) *Service {
+	return &Service{jwt: authGenerator, repo: repository, internalBroker: internalBroker}
 }

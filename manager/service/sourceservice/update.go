@@ -1,10 +1,10 @@
 package sourceservice
 
 import (
-	"github.com/rezaAmiri123/ormus/manager/param"
+	"github.com/rezaAmiri123/ormus/manager/managerparam"
 )
 
-func (s Service) UpdateSource(ownerID, sourceID string, req *param.UpdateSourceRequest) (*param.UpdateSourceResponse, error) {
+func (s Service) UpdateSource(ownerID, sourceID string, req *managerparam.UpdateSourceRequest) (*managerparam.UpdateSourceResponse, error) {
 	source, err := s.repo.GetUserSourceByID(ownerID, sourceID)
 	if err != nil {
 		return nil, err

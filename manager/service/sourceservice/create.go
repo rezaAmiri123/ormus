@@ -2,11 +2,11 @@ package sourceservice
 
 import (
 	"github.com/rezaAmiri123/ormus/manager/entity"
-	"github.com/rezaAmiri123/ormus/manager/param"
+	"github.com/rezaAmiri123/ormus/manager/managerparam"
 	writekey "github.com/rezaAmiri123/ormus/pkg/write_key"
 )
 
-func (s Service) CreateSource(req *param.AddSourceRequest, ownerID string) (*param.AddSourceResponse, error) {
+func (s Service) CreateSource(req *managerparam.AddSourceRequest, ownerID string) (*managerparam.AddSourceResponse, error) {
 	w, err := writekey.GenerateNewWriteKey()
 	if err != nil {
 		return nil, err

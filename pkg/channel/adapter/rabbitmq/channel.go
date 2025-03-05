@@ -3,13 +3,14 @@ package rbbitmqchannel
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"sync"
+	"time"
+
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
 	"github.com/rezaAmiri123/ormus/pkg/errmsg"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"log/slog"
-	"sync"
-	"time"
 )
 
 type rabbitmqChannel struct {
