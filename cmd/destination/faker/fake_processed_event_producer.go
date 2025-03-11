@@ -7,11 +7,11 @@ import (
 	"log"
 	"time"
 
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/event"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/manager/entity"
-	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 const timeoutSeconds = 5

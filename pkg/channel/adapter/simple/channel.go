@@ -1,10 +1,11 @@
 package simple
 
 import (
-	"github.com/rezaAmiri123/ormus/logger"
-	"github.com/rezaAmiri123/ormus/pkg/channel"
 	"sync"
 	"time"
+
+	"github.com/rezaAmiri123/ormus/logger"
+	"github.com/rezaAmiri123/ormus/pkg/channel"
 )
 
 type simpleChannel struct {
@@ -20,7 +21,8 @@ type simpleChannel struct {
 const timeForCallAgainDuration = 10
 
 func newChannel(done <-chan bool, wg *sync.WaitGroup, mode channel.Mode,
-	bufferSize, numberInstants, maxRetryPolicy int) *simpleChannel {
+	bufferSize, numberInstants, maxRetryPolicy int,
+) *simpleChannel {
 	sc := &simpleChannel{
 		done:           done,
 		wg:             wg,
