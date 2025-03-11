@@ -1,0 +1,18 @@
+rm -rf a*
+cp -r /home/reza/go/src/others/ormus/a* .
+rm -rf c*
+cp -r /home/reza/go/src/others/ormus/c* .
+rm -rf d*
+cp -r /home/reza/go/src/others/ormus/d* .
+rm -rf e*
+cp -r /home/reza/go/src/others/ormus/e* .
+rm -rf l*
+cp -r /home/reza/go/src/others/ormus/l* .
+rm -rf m*
+cp -r /home/reza/go/src/others/ormus/m* .
+rm -rf p*
+cp -r /home/reza/go/src/others/ormus/p* .
+rm -rf s*
+cp -r /home/reza/go/src/others/ormus/s* .
+cp -r /home/reza/go/src/others/ormus/.github/ .
+cp -r /home/reza/go/src/others/ormus/Makefile .
