@@ -7,13 +7,12 @@ import (
 	"strconv"
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"github.com/rezaAmiri123/ormus/logger"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
-
 	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"github.com/rezaAmiri123/ormus/destination/taskdelivery"
 	"github.com/rezaAmiri123/ormus/event"
+	"github.com/rezaAmiri123/ormus/logger"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (s Service) HandleTask(ctx context.Context, newEvent event.ProcessedEvent) error {

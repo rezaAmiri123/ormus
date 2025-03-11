@@ -5,11 +5,10 @@ import (
 	"time"
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
-
 	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"github.com/rezaAmiri123/ormus/destination/taskservice/param"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Repository interface {
@@ -51,7 +50,6 @@ func (s Service) LockTaskByID(ctx context.Context, taskID string) (unlock func()
 	const ttl = 10
 
 	return s.locker.Lock(ctx, lockKey, ttl)
-
 }
 
 func (s Service) GetTaskStatusByID(ctx context.Context, taskID string) (taskentity.IntegrationDeliveryStatus, error) {

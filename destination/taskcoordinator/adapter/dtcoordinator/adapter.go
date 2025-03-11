@@ -6,14 +6,13 @@ import (
 	"sync"
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
+	"github.com/rezaAmiri123/ormus/destination/taskmanager"
+	"github.com/rezaAmiri123/ormus/event"
+	"github.com/rezaAmiri123/ormus/manager/entity"
 	"github.com/rezaAmiri123/ormus/pkg/metricname"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-
-	"github.com/rezaAmiri123/ormus/destination/taskmanager"
-	"github.com/rezaAmiri123/ormus/event"
-	"github.com/rezaAmiri123/ormus/manager/entity"
 )
 
 type TaskPublisherMap map[entity.DestinationType]taskmanager.Publisher

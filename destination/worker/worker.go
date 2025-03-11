@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"github.com/rezaAmiri123/ormus/destination/taskmanager"
 	"github.com/rezaAmiri123/ormus/event"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/pkg/metricname"
@@ -63,7 +62,6 @@ func (w *Worker) Run(done <-chan bool, wg *sync.WaitGroup) error {
 					}
 
 					otela.IncrementFloat64Counter(ctx, meter, metricname.ProcessFlowOutputDestinationWorkerDoneJob, "event_handled_publish_done_job")
-
 				}()
 			case <-done:
 
@@ -75,7 +73,7 @@ func (w *Worker) Run(done <-chan bool, wg *sync.WaitGroup) error {
 	return nil
 }
 
-func NewWorker(events <-chan event.ProcessedEvent, th taskmanager.TaskHandler) *Worker {
+func NewWorker(events <-chan event.ProcessedEvent, th TaskHandler) *Worker {
 	return &Worker{
 		EventsChannel: events,
 		TaskHandler:   th,

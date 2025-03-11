@@ -10,9 +10,6 @@ import (
 	"time"
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
-
 	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/destination/processedevent/adapter/rabbitmqconsumer"
@@ -22,6 +19,8 @@ import (
 	"github.com/rezaAmiri123/ormus/manager/entity"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
 	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const waitingAfterShutdownInSeconds = 1

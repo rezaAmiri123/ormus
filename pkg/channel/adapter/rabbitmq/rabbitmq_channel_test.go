@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
-
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
 )

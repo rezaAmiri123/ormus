@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"go.opentelemetry.io/otel/propagation"
-
 	"github.com/rezaAmiri123/ormus/logger"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.25.0"
@@ -25,7 +24,6 @@ func (opr *otelProvider) newTraceExporter(ctx context.Context) (sdktrace.SpanExp
 	default:
 		panic("unsupported")
 	}
-
 }
 
 func (opr *otelProvider) newTraceProvider(exp sdktrace.SpanExporter) *sdktrace.TracerProvider {

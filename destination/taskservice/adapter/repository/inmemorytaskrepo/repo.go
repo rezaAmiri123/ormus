@@ -5,11 +5,10 @@ import (
 	"fmt"
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
-
 	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"github.com/rezaAmiri123/ormus/destination/taskservice/param"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (db DB) GetTaskByID(taskID string) (taskentity.Task, error) {

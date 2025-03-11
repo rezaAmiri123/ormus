@@ -62,7 +62,7 @@ func main() {
 			select {
 			case msg := <-outputChannel:
 				func() {
-					fmt.Printf("recived message : %s\n", msg.Body)
+					fmt.Printf("received message : %s\n", msg.Body)
 					var decode MyMessage
 					err = json.Unmarshal(msg.Body, &decode)
 					if err != nil {

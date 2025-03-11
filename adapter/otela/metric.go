@@ -25,7 +25,6 @@ func (opr *otelProvider) newMetricExporter(ctx context.Context) (sdkMetric.Expor
 	default:
 		panic("unsupported")
 	}
-
 }
 
 func (opr *otelProvider) newMetricProvider(exp sdkMetric.Exporter) *sdkMetric.MeterProvider {

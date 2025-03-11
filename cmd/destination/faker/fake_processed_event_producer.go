@@ -12,17 +12,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"github.com/rezaAmiri123/ormus/pkg/metricname"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
-
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rezaAmiri123/ormus/adapter/otela"
 	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/event"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/manager/entity"
+	"github.com/rezaAmiri123/ormus/pkg/metricname"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const timeoutSeconds = 5

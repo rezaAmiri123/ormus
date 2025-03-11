@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/rezaAmiri123/ormus/adapter/otela"
+	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-
-	"github.com/redis/go-redis/v9"
-	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 )
 
 func (db DB) SaveTaskStatus(ctx context.Context, taskID string, status taskentity.IntegrationDeliveryStatus) error {

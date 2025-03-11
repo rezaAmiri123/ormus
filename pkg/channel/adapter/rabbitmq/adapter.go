@@ -7,9 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rezaAmiri123/ormus/adapter/otela"
-
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rezaAmiri123/ormus/adapter/otela"
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/pkg/channel"

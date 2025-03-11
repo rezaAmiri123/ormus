@@ -7,14 +7,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
-
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rezaAmiri123/ormus/adapter/otela"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
 	"github.com/rezaAmiri123/ormus/pkg/errmsg"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type rabbitmqChannel struct {
