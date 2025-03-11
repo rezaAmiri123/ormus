@@ -5,6 +5,10 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/rezaAmiri123/ormus/adapter/otela"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
+
 	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"github.com/rezaAmiri123/ormus/destination/taskdelivery/param"
 )
@@ -18,9 +22,18 @@ func New() *FakeHandler {
 const fakeProcessingTimeSecond = 2
 
 func (h FakeHandler) Handle(t taskentity.Task) (param.DeliveryTaskResponse, error) {
+	tracer := otela.NewTracer("fakedeliveryhandler")
+	_, span := tracer.Start(otela.GetContextFromCarrier(t.ProcessedEvent.TracerCarrier), "fakedeliveryhandler@Handle")
+	defer span.End()
+
 	time.Sleep(fakeProcessingTimeSecond * time.Second)
 
-	slog.Info(fmt.Sprintf("Task [%s] handled successfully! ✅ ", t.ID))
+	result := fmt.Sprintf("Task [%s] handled successfully! ✅ ", t.ID)
+
+	slog.Info(result)
+	span.AddEvent("result", trace.WithAttributes(
+		attribute.String("result", result),
+	))
 
 	res := param.DeliveryTaskResponse{
 		Attempts:       1,

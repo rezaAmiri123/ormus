@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rezaAmiri123/ormus/adapter/otela"
+
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
 )
@@ -53,6 +55,11 @@ func TestRabbitmqChannel(t *testing.T) {
 	bufferSize := 100
 	numberInstants := 10
 	maxRetryPolicy := 5
+
+	err := otela.Configure(wg, done, otela.Config{Exporter: otela.ExporterConsole})
+	if err != nil {
+		t.Error(err.Error())
+	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
