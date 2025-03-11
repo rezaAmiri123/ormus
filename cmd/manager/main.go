@@ -5,20 +5,20 @@ import (
 	"log/slog"
 	"sync"
 
-	"github.com/rezaAmiri123/ormus/config"
-	"github.com/rezaAmiri123/ormus/logger"
-	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver"
-	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver/userhandler"
-	"github.com/rezaAmiri123/ormus/manager/managerparam"
-	"github.com/rezaAmiri123/ormus/manager/mockRepo/projectstub"
-	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo"
-	"github.com/rezaAmiri123/ormus/manager/service/authservice"
-	"github.com/rezaAmiri123/ormus/manager/service/projectservice"
-	"github.com/rezaAmiri123/ormus/manager/service/userservice"
-	"github.com/rezaAmiri123/ormus/manager/validator/uservalidator"
-	"github.com/rezaAmiri123/ormus/manager/workers"
-	"github.com/rezaAmiri123/ormus/pkg/channel"
-	"github.com/rezaAmiri123/ormus/pkg/channel/adapter/simple"
+	"github.com/ormushq/ormus/config"
+	"github.com/ormushq/ormus/logger"
+	"github.com/ormushq/ormus/manager/delivery/httpserver"
+	"github.com/ormushq/ormus/manager/delivery/httpserver/userhandler"
+	"github.com/ormushq/ormus/manager/managerparam"
+	"github.com/ormushq/ormus/manager/mockRepo/projectstub"
+	"github.com/ormushq/ormus/manager/repository/scyllarepo"
+	"github.com/ormushq/ormus/manager/service/authservice"
+	"github.com/ormushq/ormus/manager/service/projectservice"
+	"github.com/ormushq/ormus/manager/service/userservice"
+	"github.com/ormushq/ormus/manager/validator/uservalidator"
+	"github.com/ormushq/ormus/manager/workers"
+	"github.com/ormushq/ormus/pkg/channel"
+	"github.com/ormushq/ormus/pkg/channel/adapter/simple"
 )
 
 func main() {
@@ -47,11 +47,12 @@ func main() {
 
 	ProjectSvc := projectservice.New(&unknownRepo1, internalBroker)
 
-	userSvc := userservice.New(jwt, scylla, internalBroker)
-
 	validateUserSvc := uservalidator.New(scylla)
 
-	userHand := userhandler.New(userSvc, validateUserSvc, ProjectSvc)
+	userSvc := userservice.New(jwt, scylla, internalBroker, validateUserSvc)
+
+	userHand := userhandler.New(userSvc, ProjectSvc)
+
 	workers.New(ProjectSvc, internalBroker).Run(done, &wg)
 
 	server := httpserver.New(cfg, httpserver.SetupServicesResponse{
