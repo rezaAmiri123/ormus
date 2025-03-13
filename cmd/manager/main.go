@@ -8,13 +8,16 @@ import (
 	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver"
+	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver/projecthandler"
 	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver/userhandler"
 	"github.com/rezaAmiri123/ormus/manager/managerparam"
-	"github.com/rezaAmiri123/ormus/manager/mockRepo/projectstub"
 	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo"
+	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo/scyllaproject"
+	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo/scyllauser"
 	"github.com/rezaAmiri123/ormus/manager/service/authservice"
 	"github.com/rezaAmiri123/ormus/manager/service/projectservice"
 	"github.com/rezaAmiri123/ormus/manager/service/userservice"
+	"github.com/rezaAmiri123/ormus/manager/validator/projectvalidator"
 	"github.com/rezaAmiri123/ormus/manager/validator/uservalidator"
 	"github.com/rezaAmiri123/ormus/manager/workers"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
@@ -40,8 +43,8 @@ func main() {
 	cfg := config.C().Manager
 	done := make(chan bool)
 	wg := sync.WaitGroup{}
-	fmt.Println(cfg)
-	fmt.Println(cfg.ScyllaDBConfig)
+	logger.L().Debug(fmt.Sprintf("%+v", cfg))
+	logger.L().Debug(fmt.Sprintf("%+v", cfg.ScyllaDBConfig))
 
 	internalBroker := simple.New(done, &wg)
 	err := internalBroker.NewChannel(managerparam.CreateDefaultProject, channel.BothMode,
@@ -50,26 +53,27 @@ func main() {
 		logger.L().Error("error on creating internal broker channel", err)
 	}
 
-	jwt := authservice.NewJWT(cfg.JWTConfig)
+	authSvc := authservice.New(cfg.AuthConfig)
 	scylla, err := scyllarepo.New(cfg.ScyllaDBConfig)
 	if err != nil {
 		logger.L().Error("err msg:", err)
 	}
 
-	unknownRepo1 := projectstub.New(false)
+	projectRepo := scyllaproject.New(scylla)
+	projectValidator := projectvalidator.New(projectRepo)
+	projectSvc := projectservice.New(projectRepo, internalBroker, projectValidator)
+	projectHandler := projecthandler.New(authSvc, projectSvc)
 
-	ProjectSvc := projectservice.New(&unknownRepo1, internalBroker)
+	userRepo := scyllauser.New(scylla)
+	userValidator := uservalidator.New(userRepo)
+	userSvc := userservice.New(authSvc, userRepo, internalBroker, userValidator)
+	userHand := userhandler.New(userSvc, projectSvc)
 
-	validateUserSvc := uservalidator.New(scylla)
-
-	userSvc := userservice.New(jwt, scylla, internalBroker, validateUserSvc)
-
-	userHand := userhandler.New(userSvc, ProjectSvc)
-
-	workers.New(ProjectSvc, internalBroker).Run(done, &wg)
+	workers.New(projectSvc, internalBroker).Run(done, &wg)
 
 	server := httpserver.New(cfg, httpserver.SetupServicesResponse{
-		UserHandler: userHand,
+		UserHandler:    userHand,
+		ProjectHandler: projectHandler,
 	})
 
 	server.Server()

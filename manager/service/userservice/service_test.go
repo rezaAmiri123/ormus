@@ -11,6 +11,7 @@ import (
 	"github.com/rezaAmiri123/ormus/manager/mockRepo/usermock"
 	"github.com/rezaAmiri123/ormus/manager/service/projectservice"
 	"github.com/rezaAmiri123/ormus/manager/service/userservice"
+	"github.com/rezaAmiri123/ormus/manager/validator/projectvalidator"
 	"github.com/rezaAmiri123/ormus/manager/validator/uservalidator"
 	"github.com/rezaAmiri123/ormus/manager/workers"
 	"github.com/rezaAmiri123/ormus/param"
@@ -30,7 +31,8 @@ func TestService_Register(t *testing.T) {
 	internalBroker.NewChannel("CreateDefaultProject", channel.BothMode,
 		cfg.InternalBrokerConfig.ChannelSize, cfg.InternalBrokerConfig.NumberInstant, cfg.InternalBrokerConfig.MaxRetryPolicy)
 	RepoPr := projectstub.New(false)
-	ProjectSvc := projectservice.New(&RepoPr, internalBroker)
+	val := projectvalidator.New(&RepoPr)
+	ProjectSvc := projectservice.New(&RepoPr, internalBroker, val)
 	workers.New(ProjectSvc, internalBroker).Run(done, &wg)
 	testCases := []struct {
 		name        string

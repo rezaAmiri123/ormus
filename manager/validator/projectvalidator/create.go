@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/rezaAmiri123/ormus/manager/managerparam/projectparam"
 	"github.com/rezaAmiri123/ormus/manager/validator"
-	"github.com/rezaAmiri123/ormus/param"
 	"github.com/rezaAmiri123/ormus/pkg/errmsg"
 	"github.com/rezaAmiri123/ormus/pkg/richerror"
 )
@@ -14,13 +14,11 @@ import (
 	Logic ValidateCreateRequest
 
 	1. Name is required
-	2. Email is required
-	3. Email have to be valid
-	4. Email regex have to match
+	2. Description is required
 
 */
 
-func (v Validator) ValidateCreateRequest(req param.CreateProjectRequest) *validator.Error {
+func (v Validator) ValidateCreateRequest(req projectparam.CreateRequest) *validator.Error {
 	const op = "projectvalidator.ValidateCreateRequest"
 
 	const minNameLength = 3
@@ -29,6 +27,7 @@ func (v Validator) ValidateCreateRequest(req param.CreateProjectRequest) *valida
 	if err := validation.ValidateStruct(&req,
 		validation.Field(&req.Name, validation.Required, validation.Length(minNameLength, maxNameLength)),
 		validation.Field(&req.UserID, validation.Required),
+		validation.Field(&req.Description, validation.Required),
 	); err != nil {
 		fieldErr := make(map[string]string)
 
