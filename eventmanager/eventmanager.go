@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ormushq/ormus/contract/go/internalevent"
-	"github.com/ormushq/ormus/logger"
-	"github.com/ormushq/ormus/pkg/channel"
+	"github.com/rezaAmiri123/ormus/contract/go/internalevent"
+	"github.com/rezaAmiri123/ormus/logger"
+	"github.com/rezaAmiri123/ormus/pkg/channel"
 	"google.golang.org/protobuf/proto"
 )
 

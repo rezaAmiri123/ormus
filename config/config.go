@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/rezaAmiri123/ormus/adapter/etcd"
+	"github.com/rezaAmiri123/ormus/adapter/rabbitmq"
 	"github.com/rezaAmiri123/ormus/adapter/redis"
 	"github.com/rezaAmiri123/ormus/adapter/scylladb"
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
@@ -12,6 +13,7 @@ import (
 type Config struct {
 	Redis       redis.Config    `koanf:"redis"`
 	Etcd        etcd.Config     `koanf:"etcd"`
+	RabbitMq    rabbitmq.Config `koanf:"rabbitmq"`
 	Manager     manager.Config  `koanf:"manager"`
 	Source      source.Config   `koanf:"source"`
 	Destination dconfig.Config  `koanf:"destination"`
