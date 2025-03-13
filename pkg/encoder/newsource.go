@@ -3,7 +3,7 @@ package encoder
 import (
 	"encoding/base64"
 
-	"github.com/rezaAmiri123/ormus/contract/go/source"
+	"github.com/ormushq/ormus/contract/go/source"
 	"google.golang.org/protobuf/proto"
 )
 

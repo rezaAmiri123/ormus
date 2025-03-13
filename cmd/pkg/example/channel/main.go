@@ -5,10 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
-	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
+	"github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmqchannel"
 )
 
 func main() {
@@ -18,16 +17,27 @@ func main() {
 	channelName := "test"
 
 	maxRetryPolicy := 5
-	numberInstants := 5
 	bufferSize := 5
-	inputChannelAdapter := rbbitmqchannel.New(done, &wg, config.C().Destination.RabbitMQConsumerConnection)
-	err := inputChannelAdapter.NewChannel(channelName, channel.InputOnlyMode, bufferSize, numberInstants, maxRetryPolicy)
+	port := 5672
+	reconnectSecond := 2
+
+	cfg := rabbitmqchannel.Config{
+		User:            "guest",
+		Password:        "guest",
+		Host:            "127.0.0.1",
+		Port:            port,
+		Vhost:           "/",
+		ReconnectSecond: reconnectSecond,
+	}
+
+	inputChannelAdapter := rabbitmqchannel.New(done, &wg, cfg)
+	err := inputChannelAdapter.NewChannel(channelName, channel.InputOnlyMode, bufferSize, maxRetryPolicy)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	outputChannelAdapter := rbbitmqchannel.New(done, &wg, config.C().Destination.RabbitMQConsumerConnection)
-	err = outputChannelAdapter.NewChannel(channelName, channel.OutputOnly, bufferSize, numberInstants, maxRetryPolicy)
+	outputChannelAdapter := rabbitmqchannel.New(done, &wg, cfg)
+	err = outputChannelAdapter.NewChannel(channelName, channel.OutputOnly, bufferSize, maxRetryPolicy)
 	if err != nil {
 		log.Fatal(err)
 	}

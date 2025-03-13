@@ -11,14 +11,13 @@ import (
 
 	"github.com/rezaAmiri123/ormus/adapter/otela"
 	"github.com/rezaAmiri123/ormus/config"
-	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/destination/processedevent/adapter/rabbitmqconsumer"
 	"github.com/rezaAmiri123/ormus/destination/taskcoordinator/adapter/dtcoordinator"
 	"github.com/rezaAmiri123/ormus/destination/taskmanager/adapter/rabbitmqchanneltaskmanager"
 	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/manager/entity"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
-	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
+	"github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmqchannel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -100,12 +99,11 @@ func main() {
 
 	reconnectSecond := 5
 	channelSize := 100
-	numberInstant := 5
 	maxRetryPolicy := 5
 
 	taskPublisherCnf := config.C().Destination.RabbitMQTaskManagerConnection
 
-	inputChannelAdapter := rbbitmqchannel.NewWithContext(ctx, done, &wg, dconfig.RabbitMQConsumerConnection{
+	inputChannelAdapter := rabbitmqchannel.New(done, &wg, rabbitmqchannel.Config{
 		User:            taskPublisherCnf.User,
 		Password:        taskPublisherCnf.Password,
 		Host:            taskPublisherCnf.Host,
@@ -117,7 +115,7 @@ func main() {
 
 	webHookQueueName := "webhook_tasks"
 
-	errNCA := inputChannelAdapter.NewChannelWithContext(ctx, webHookQueueName, channel.InputOnlyMode, channelSize, numberInstant, maxRetryPolicy)
+	errNCA := inputChannelAdapter.NewChannel(webHookQueueName, channel.InputOnlyMode, channelSize, maxRetryPolicy)
 	if errNCA != nil {
 		logger.L().Error(errNCA.Error(), err)
 		os.Exit(1)

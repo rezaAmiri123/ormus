@@ -7,18 +7,17 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/rezaAmiri123/ormus/adapter/otela"
-	"github.com/rezaAmiri123/ormus/adapter/redis"
-	"github.com/rezaAmiri123/ormus/config"
-	"github.com/rezaAmiri123/ormus/destination/dconfig"
-	"github.com/rezaAmiri123/ormus/logger"
-	"github.com/rezaAmiri123/ormus/pkg/channel"
-	rbbitmqchannel "github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmq"
-	"github.com/rezaAmiri123/ormus/source/delivery/httpserver"
-	"github.com/rezaAmiri123/ormus/source/delivery/httpserver/statushandler"
-	sourceevent "github.com/rezaAmiri123/ormus/source/eventhandler"
-	writekeyrepo "github.com/rezaAmiri123/ormus/source/repository/redis/rediswritekey"
-	"github.com/rezaAmiri123/ormus/source/service/writekey"
+	"github.com/ormushq/ormus/adapter/otela"
+	"github.com/ormushq/ormus/adapter/redis"
+	"github.com/ormushq/ormus/config"
+	"github.com/ormushq/ormus/logger"
+	"github.com/ormushq/ormus/pkg/channel"
+	"github.com/ormushq/ormus/pkg/channel/adapter/rabbitmqchannel"
+	"github.com/ormushq/ormus/source/delivery/httpserver"
+	"github.com/ormushq/ormus/source/delivery/httpserver/statushandler"
+	sourceevent "github.com/ormushq/ormus/source/eventhandler"
+	writekeyrepo "github.com/ormushq/ormus/source/repository/redis/rediswritekey"
+	"github.com/ormushq/ormus/source/service/writekey"
 )
 
 //	@termsOfService	http://swagger.io/terms/
@@ -106,16 +105,9 @@ func main() {
 func SetupSourceServices(cfg config.Config) (writekey.Service, sourceevent.Consumer) {
 	done := make(chan bool)
 	wg := &sync.WaitGroup{}
-	dbConfig := dconfig.RabbitMQConsumerConnection{
-		User:            cfg.RabbitMq.UserName,
-		Password:        cfg.RabbitMq.Password,
-		Host:            cfg.RabbitMq.Host,
-		Port:            cfg.RabbitMq.Port,
-		Vhost:           cfg.RabbitMq.Vhost,
-		ReconnectSecond: cfg.RabbitMq.ReconnectSecond,
-	}
-	outputAdapter := rbbitmqchannel.New(done, wg, dbConfig)
-	err := outputAdapter.NewChannel(cfg.Source.NewSourceEventName, channel.OutputOnly, cfg.Source.BufferSize, cfg.Source.NumberInstants, cfg.Source.MaxRetry)
+
+	outputAdapter := rabbitmqchannel.New(done, wg, cfg.RabbitMq)
+	err := outputAdapter.NewChannel(cfg.Source.NewSourceEventName, channel.OutputOnly, cfg.Source.BufferSize, cfg.Source.MaxRetry)
 	if err != nil {
 		panic(err)
 	}
