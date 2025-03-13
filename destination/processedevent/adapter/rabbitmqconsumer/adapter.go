@@ -7,12 +7,12 @@ import (
 	"log/slog"
 	"sync"
 
-	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rezaAmiri123/ormus/adapter/otela"
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/destination/entity/taskentity"
 	"github.com/rezaAmiri123/ormus/event"
 	"github.com/rezaAmiri123/ormus/pkg/metricname"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
