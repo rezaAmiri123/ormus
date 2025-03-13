@@ -123,6 +123,9 @@ github.com/knadh/koanf/parsers/yaml
 github.com/knadh/koanf/providers/env
 github.com/knadh/koanf/providers/file
 github.com/knadh/koanf/providers/structs
+# github.com/labstack/echo-jwt/v4 v4.3.0
+## explicit; go 1.20
+github.com/labstack/echo-jwt/v4
 # github.com/labstack/echo/v4 v4.13.3
 ## explicit; go 1.20
 github.com/labstack/echo/v4
