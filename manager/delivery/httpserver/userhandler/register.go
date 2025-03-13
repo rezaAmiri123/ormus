@@ -7,15 +7,28 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rezaAmiri123/ormus/manager/validator"
 	"github.com/rezaAmiri123/ormus/param"
-	"github.com/rezaAmiri123/ormus/pkg/echomsg"
 	"github.com/rezaAmiri123/ormus/pkg/errmsg"
 	"github.com/rezaAmiri123/ormus/pkg/httpmsg"
+	"github.com/rezaAmiri123/ormus/pkg/httputil"
 )
 
+// RegisterUser godoc
+//
+//	@Summary		Login user
+//	@Description	Login user
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		param.RegisterRequest	true	"Register request body"
+//	@Success		201		{object}	param.RegisterResponse
+//	@Failure		400		{object}	httputil.HTTPError
+//	@Failure		500		{object}	httputil.HTTPError
+//	@Security		JWTToken
+//	@Router			/users/register [post]
 func (h Handler) RegisterUser(ctx echo.Context) error {
 	var Req param.RegisterRequest
 	if err := ctx.Bind(&Req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, echomsg.DefaultMessage(errmsg.ErrBadRequest))
+		return httputil.NewError(ctx, http.StatusBadRequest, errmsg.ErrBadRequest)
 	}
 
 	// TODO: should we return service error? or should we only return bad request error?
@@ -31,7 +44,7 @@ func (h Handler) RegisterUser(ctx echo.Context) error {
 		})
 	}
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, echomsg.DefaultMessage(errmsg.ErrBadRequest))
+		return httputil.NewError(ctx, http.StatusBadRequest, errmsg.ErrBadRequest)
 	}
 
 	return ctx.JSON(http.StatusCreated, resp)
