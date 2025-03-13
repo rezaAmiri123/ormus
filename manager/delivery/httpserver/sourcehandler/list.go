@@ -14,21 +14,23 @@ import (
 	"github.com/rezaAmiri123/ormus/pkg/httputil"
 )
 
-// Delete godoc
+// List godoc
 //
-//	@Summary		Delete source
-//	@Description	Delete source
+//	@Summary		List sources
+//	@Description	List sources
 //	@Tags			Source
 //	@Accept			json
 //	@Produce		json
-//	@Param			source_id	path		string	true	"Source identifier"
-//	@Success		200			{object}	sourceparam.DeleteResponse
-//	@Failure		400			{object}	httputil.HTTPError
-//	@Failure		401			{object}	httputil.HTTPError
-//	@Failure		500			{object}	httputil.HTTPError
+//	@Param			last_token_id	query		string	false	"Last token fetched"
+//	@Param			per_page		query		int		false	"Per page count"
+//	@Success		200				{object}	sourceparam.ListResponse
+//	@Failure		400				{object}	httputil.HTTPError
+//	@Failure		401				{object}	httputil.HTTPError
+//	@Failure		500				{object}	httputil.HTTPError
 //	@Security		JWTToken
-//	@Router			/sources/{source_id} [delete]
-func (h Handler) Delete(ctx echo.Context) error {
+//	@Router			/sources [get]
+func (h Handler) List(ctx echo.Context) error {
+	// get user id from context
 	claim, ok := ctx.Get(h.authSvc.GetConfig().ContextKey).(*authservice.Claims)
 	if !ok {
 		return ctx.JSON(http.StatusBadRequest, echo.Map{
@@ -36,14 +38,23 @@ func (h Handler) Delete(ctx echo.Context) error {
 		})
 	}
 
-	var req sourceparam.DeleteRequest
+	var req sourceparam.ListRequest
 	if err := ctx.Bind(&req); err != nil {
 		return httputil.NewError(ctx, http.StatusBadRequest, errmsg.ErrBadRequest)
 	}
 
 	req.UserID = claim.UserID
 
-	resp, err := h.sourceSvc.Delete(req)
+	if req.PerPage == 0 {
+		req.PerPage = 10
+	}
+	var lastTokenID int64 = -9223372036854775808
+	if req.LastTokenID == 0 {
+		req.LastTokenID = lastTokenID
+	}
+
+	// call save method in service
+	resp, err := h.sourceSvc.List(req)
 
 	logger.LogError(err)
 	var vErr *validator.Error

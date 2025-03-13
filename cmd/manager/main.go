@@ -7,17 +7,22 @@ import (
 
 	"github.com/rezaAmiri123/ormus/config"
 	"github.com/rezaAmiri123/ormus/logger"
+	"github.com/rezaAmiri123/ormus/manager"
 	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver"
 	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver/projecthandler"
+	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver/sourcehandler"
 	"github.com/rezaAmiri123/ormus/manager/delivery/httpserver/userhandler"
 	"github.com/rezaAmiri123/ormus/manager/managerparam"
 	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo"
 	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo/scyllaproject"
+	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo/scyllasource"
 	"github.com/rezaAmiri123/ormus/manager/repository/scyllarepo/scyllauser"
 	"github.com/rezaAmiri123/ormus/manager/service/authservice"
 	"github.com/rezaAmiri123/ormus/manager/service/projectservice"
+	"github.com/rezaAmiri123/ormus/manager/service/sourceservice"
 	"github.com/rezaAmiri123/ormus/manager/service/userservice"
 	"github.com/rezaAmiri123/ormus/manager/validator/projectvalidator"
+	"github.com/rezaAmiri123/ormus/manager/validator/sourcevalidator"
 	"github.com/rezaAmiri123/ormus/manager/validator/uservalidator"
 	"github.com/rezaAmiri123/ormus/manager/workers"
 	"github.com/rezaAmiri123/ormus/pkg/channel"
@@ -42,11 +47,19 @@ func main() {
 	logger.L().Debug("start manger")
 	cfg := config.C().Manager
 	done := make(chan bool)
-	wg := sync.WaitGroup{}
+	wg := &sync.WaitGroup{}
 	logger.L().Debug(fmt.Sprintf("%+v", cfg))
 	logger.L().Debug(fmt.Sprintf("%+v", cfg.ScyllaDBConfig))
 
-	internalBroker := simple.New(done, &wg)
+	svcs := setupServices(wg, done, cfg)
+
+	server := httpserver.New(cfg, svcs)
+
+	server.Server()
+}
+
+func setupServices(wg *sync.WaitGroup, done <-chan bool, cfg manager.Config) httpserver.SetupServices {
+	internalBroker := simple.New(done, wg)
 	err := internalBroker.NewChannel(managerparam.CreateDefaultProject, channel.BothMode,
 		cfg.InternalBrokerConfig.ChannelSize, cfg.InternalBrokerConfig.NumberInstant, cfg.InternalBrokerConfig.MaxRetryPolicy)
 	if err != nil {
@@ -64,17 +77,21 @@ func main() {
 	projectSvc := projectservice.New(projectRepo, internalBroker, projectValidator)
 	projectHandler := projecthandler.New(authSvc, projectSvc)
 
+	sourceRepo := scyllasource.New(scylla)
+	sourceValidator := sourcevalidator.New(sourceRepo)
+	sourceSvc := sourceservice.New(sourceRepo, sourceValidator, projectSvc)
+	sourceHandler := sourcehandler.New(authSvc, sourceSvc)
+
 	userRepo := scyllauser.New(scylla)
 	userValidator := uservalidator.New(userRepo)
 	userSvc := userservice.New(authSvc, userRepo, internalBroker, userValidator)
 	userHand := userhandler.New(userSvc, projectSvc)
 
-	workers.New(projectSvc, internalBroker).Run(done, &wg)
+	workers.New(projectSvc, internalBroker).Run(done, wg)
 
-	server := httpserver.New(cfg, httpserver.SetupServicesResponse{
+	return httpserver.SetupServices{
 		UserHandler:    userHand,
 		ProjectHandler: projectHandler,
-	})
-
-	server.Server()
+		SourceHandler:  sourceHandler,
+	}
 }

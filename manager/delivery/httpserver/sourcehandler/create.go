@@ -1,39 +1,64 @@
 package sourcehandler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/rezaAmiri123/ormus/manager/managerparam"
+	"github.com/rezaAmiri123/ormus/logger"
+	"github.com/rezaAmiri123/ormus/manager/managerparam/sourceparam"
+	"github.com/rezaAmiri123/ormus/manager/service/authservice"
+	"github.com/rezaAmiri123/ormus/manager/validator"
+	"github.com/rezaAmiri123/ormus/pkg/errmsg"
+	"github.com/rezaAmiri123/ormus/pkg/httpmsg"
+	"github.com/rezaAmiri123/ormus/pkg/httputil"
 )
 
-// ? Handler or *Handler.
-func (h Handler) CreateSource(ctx echo.Context) error {
+// Create godoc
+//
+//	@Summary		Create source
+//	@Description	Create source
+//	@Tags			Source
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		sourceparam.CreateRequest	true	"Create source request body"
+//	@Success		201		{object}	sourceparam.CreateResponse
+//	@Failure		400		{object}	httputil.HTTPError
+//	@Failure		401		{object}	httputil.HTTPError
+//	@Failure		500		{object}	httputil.HTTPError
+//	@Security		JWTToken
+//	@Router			/sources [post]
+func (h Handler) Create(ctx echo.Context) error {
 	// get user id from context
-	u := ctx.Get("userID")
-	userID, ok := u.(string)
+	claim, ok := ctx.Get(h.authSvc.GetConfig().ContextKey).(*authservice.Claims)
 	if !ok {
-		return echo.NewHTTPError(http.StatusInternalServerError, EchoErrorMessage("can not get userID"))
+		return ctx.JSON(http.StatusBadRequest, echo.Map{
+			"message": "Invalid auth token",
+		})
 	}
 
-	// TODO  get project id  if get from param dont forget add to route ?
-
-	// binding addsource request form
-	AddSourceReq := new(managerparam.AddSourceRequest)
-	if err := ctx.Bind(AddSourceReq); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, EchoErrorMessage(err.Error()))
+	var req sourceparam.CreateRequest
+	if err := ctx.Bind(&req); err != nil {
+		return httputil.NewError(ctx, http.StatusBadRequest, errmsg.ErrBadRequest)
 	}
 
-	// validate form also check existen
-	if err := h.validateSvc.ValidateCreateSourceForm(*AddSourceReq); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, EchoErrorMessage(err.Error()))
+	req.UserID = claim.UserID
+
+	resp, err := h.sourceSvc.CreateSource(req)
+	logger.LogError(err)
+	var vErr *validator.Error
+	if errors.As(err, &vErr) {
+		msg, code := httpmsg.Error(vErr.Err)
+
+		return ctx.JSON(code, echo.Map{
+			"message": msg,
+			"errors":  vErr.Fields,
+		})
 	}
 
-	// call save method in service
-	sourceResp, err := h.sourceSvc.CreateSource(AddSourceReq, userID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, EchoErrorMessage(err.Error()))
+		return httputil.NewErrorWithError(ctx, err)
 	}
 
-	return ctx.JSON(http.StatusCreated, sourceResp)
+	return ctx.JSON(http.StatusCreated, resp)
 }

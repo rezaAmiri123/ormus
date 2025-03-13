@@ -10,11 +10,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/rezaAmiri123/ormus/cli/api/destination"
-	"github.com/rezaAmiri123/ormus/cli/api/project"
-	"github.com/rezaAmiri123/ormus/cli/api/source"
-	"github.com/rezaAmiri123/ormus/cli/api/types"
-	"github.com/rezaAmiri123/ormus/cli/api/user"
+	"github.com/ormushq/ormus/cli/api/destination"
+	"github.com/ormushq/ormus/cli/api/project"
+	"github.com/ormushq/ormus/cli/api/source"
+	"github.com/ormushq/ormus/cli/api/types"
+	"github.com/ormushq/ormus/cli/api/user"
 )
 
 const (
