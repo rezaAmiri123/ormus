@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
-	"github.com/ormushq/ormus/adapter/scylladb"
-	"github.com/ormushq/ormus/logger"
+	"github.com/rezaAmiri123/ormus/adapter/scylladb"
+	"github.com/rezaAmiri123/ormus/logger"
 )
 
 type ScyllaDBConnection struct {
