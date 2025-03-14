@@ -10,6 +10,10 @@ github.com/PuerkitoBio/urlesc
 # github.com/beorn7/perks v1.0.1
 ## explicit; go 1.11
 github.com/beorn7/perks/quantile
+# github.com/bxcodec/faker/v3 v3.8.1
+## explicit; go 1.12
+github.com/bxcodec/faker/v3
+github.com/bxcodec/faker/v3/support/slice
 # github.com/cenkalti/backoff/v4 v4.3.0
 ## explicit; go 1.18
 github.com/cenkalti/backoff/v4
@@ -37,6 +41,9 @@ github.com/fsnotify/fsnotify
 # github.com/ghodss/yaml v1.0.0
 ## explicit
 github.com/ghodss/yaml
+# github.com/go-co-op/gocron v1.37.0
+## explicit; go 1.16
+github.com/go-co-op/gocron
 # github.com/go-logr/logr v1.4.2
 ## explicit; go 1.18
 github.com/go-logr/logr
@@ -195,6 +202,9 @@ github.com/redis/go-redis/v9/internal/pool
 github.com/redis/go-redis/v9/internal/proto
 github.com/redis/go-redis/v9/internal/rand
 github.com/redis/go-redis/v9/internal/util
+# github.com/robfig/cron/v3 v3.0.1
+## explicit; go 1.12
+github.com/robfig/cron/v3
 # github.com/scylladb/go-reflectx v1.0.1
 ## explicit
 github.com/scylladb/go-reflectx
@@ -211,10 +221,14 @@ github.com/spf13/pflag
 # github.com/streadway/amqp v1.1.0
 ## explicit; go 1.10
 github.com/streadway/amqp
+# github.com/stretchr/objx v0.5.2
+## explicit; go 1.20
+github.com/stretchr/objx
 # github.com/stretchr/testify v1.10.0
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/assert/yaml
+github.com/stretchr/testify/mock
 # github.com/swaggo/echo-swagger v1.4.1
 ## explicit; go 1.17
 github.com/swaggo/echo-swagger
@@ -359,6 +373,9 @@ golang.org/x/net/idna
 golang.org/x/net/internal/httpcommon
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
+# golang.org/x/sync v0.11.0
+## explicit; go 1.18
+golang.org/x/sync/singleflight
 # golang.org/x/sys v0.30.0
 ## explicit; go 1.18
 golang.org/x/sys/unix
