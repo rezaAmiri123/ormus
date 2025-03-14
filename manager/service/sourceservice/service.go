@@ -1,6 +1,7 @@
 package sourceservice
 
 import (
+	"github.com/rezaAmiri123/ormus/contract/go/source"
 	"github.com/rezaAmiri123/ormus/manager/entity"
 	"github.com/rezaAmiri123/ormus/manager/managerparam/projectparam"
 	"github.com/rezaAmiri123/ormus/manager/validator/sourcevalidator"
@@ -13,6 +14,7 @@ type SourceRepo interface {
 	Delete(source entity.Source) error
 	List(ownerID string, lastToken int64, limit int) ([]entity.Source, error)
 	HaseMore(ownerID string, lastToken int64, perPage int) (bool, error)
+	IsWriteKeyValid(writeKey string) (*source.ValidateWriteKeyResp, error)
 }
 
 type ProjectSvc interface {
