@@ -7,17 +7,17 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/ormushq/ormus/adapter/otela"
-	"github.com/ormushq/ormus/adapter/redis"
-	"github.com/ormushq/ormus/config"
-	"github.com/ormushq/ormus/logger"
-	"github.com/ormushq/ormus/pkg/channel"
-	"github.com/ormushq/ormus/pkg/channel/adapter/rabbitmqchannel"
-	"github.com/ormushq/ormus/source/delivery/httpserver"
-	"github.com/ormushq/ormus/source/delivery/httpserver/statushandler"
-	sourceevent "github.com/ormushq/ormus/source/eventhandler"
-	writekeyrepo "github.com/ormushq/ormus/source/repository/redis/rediswritekey"
-	"github.com/ormushq/ormus/source/service/writekey"
+	"github.com/rezaAmiri123/ormus/adapter/otela"
+	"github.com/rezaAmiri123/ormus/adapter/redis"
+	"github.com/rezaAmiri123/ormus/config"
+	"github.com/rezaAmiri123/ormus/logger"
+	"github.com/rezaAmiri123/ormus/pkg/channel"
+	"github.com/rezaAmiri123/ormus/pkg/channel/adapter/rabbitmqchannel"
+	"github.com/rezaAmiri123/ormus/source/delivery/httpserver"
+	"github.com/rezaAmiri123/ormus/source/delivery/httpserver/statushandler"
+	sourceevent "github.com/rezaAmiri123/ormus/source/eventhandler"
+	writekeyrepo "github.com/rezaAmiri123/ormus/source/repository/redis/rediswritekey"
+	"github.com/rezaAmiri123/ormus/source/service/writekey"
 )
 
 //	@termsOfService	http://swagger.io/terms/
