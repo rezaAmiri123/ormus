@@ -4,6 +4,7 @@ import (
 	"context"
 
 	proto_source "github.com/rezaAmiri123/ormus/contract/go/source"
+	"github.com/rezaAmiri123/ormus/logger"
 	"github.com/rezaAmiri123/ormus/pkg/richerror"
 	"github.com/rezaAmiri123/ormus/source"
 )
@@ -31,6 +32,8 @@ func (s Service) CreateNewWriteKey(ctx context.Context, ownerID, projectID, writ
 		WriteKey:  writeKey,
 	}, s.config.WriteKeyRedisExpiration)
 	if err != nil {
+		logger.L().Error(err.Error())
+
 		return richerror.New("source.service").WithWrappedError(err)
 	}
 
