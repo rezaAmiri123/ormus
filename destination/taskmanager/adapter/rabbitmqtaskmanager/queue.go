@@ -8,9 +8,9 @@ import (
 	"log/slog"
 	"time"
 
-	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rezaAmiri123/ormus/destination/dconfig"
 	"github.com/rezaAmiri123/ormus/event"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type Queue struct {
